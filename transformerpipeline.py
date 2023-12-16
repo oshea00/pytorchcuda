@@ -22,7 +22,7 @@ generator = pipeline("text-generation", model="distilgpt2")
 print(generator("In this course we will teach you how to",max_length=60,num_return_sequences=2))
 
 question_answerer = pipeline("question-answering")
-print(question_answerer(question="Where do I work?",context="My name is Mike and I often commute into Seattle to Morgan Stanley"))
+print(question_answerer(question="What building has the office where I work?",context="My name is Mike and I often walk to Seattle where Morgan Stanley has an office where I eat lunch in the Columbia Center"))
 
 
 
