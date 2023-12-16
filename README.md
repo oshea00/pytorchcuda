@@ -7,9 +7,13 @@ WSL2 Ubuntu has a special CUDA Toolkit install available [here](https://develope
 ## Scripts
 * train.py and inference.py
     - straight from the PyTorch getting started. Shows how to save and load a trained model.
+    
 * transformerpipeline.py
     - demos the pipeline "helper" swiss army knife.
+
 * tensors.py
     - basic tensor operations and cuda
-* Microsoft phi 1.5 SML (Small Language Model) capable of non-trivial code/language one-shot results that can be run on a laptop/phone...
 
+* Microsoft phi 1.5 SML (Small Language Model) capable of non-trivial code/language one-shot results that can be run on a laptop/phone. Example run on RTX3050Ti Laptop GPU takes 8 seconds.
+
+* Microsoft phi 2 SML (Small Language Model) capable of non-trivial code/language one-shot results that can be run on a laptop/phone. Example run on RTX3050Ti Laptop GPU takes 88 seconds.
