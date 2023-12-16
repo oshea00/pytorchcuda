@@ -7,7 +7,6 @@ def n3p1(n):
             n = n //2
     print(n)
 
-#n3p1(27)
 
 # Converting APL code to python:  {(+⌿⍵)÷≢⍵}
 def avg(x):
@@ -17,7 +16,7 @@ def avg(x):
 def mult_table():
     for i in range(1,11):
         for j in range(1,11):
-            print(i*j, end=" ")
+            print(f"{i*j:>4}", end=" ")
         print()
 
 # Convert APL code to python:
@@ -26,6 +25,7 @@ def lenwords(x):
     return [len(i) for i in x.split()]
 
 print(avg([1,2,3,4,5]))
-mult_table()
 print(lenwords("to that list belongs only words with length greater than three"))
+n3p1(27)
+mult_table()
 
