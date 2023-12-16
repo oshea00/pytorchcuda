@@ -11,4 +11,6 @@ WSL2 Ubuntu has a special CUDA Toolkit install available [here](https://develope
     - demos the pipeline "helper" swiss army knife.
 * tensors.py
     - basic tensor operations and cuda
+* Microsoft phi 1.5 SML (Small Language Model) capable of non-trivial code/language one-shot results
+* that can be run on a laptop/phone...
 
