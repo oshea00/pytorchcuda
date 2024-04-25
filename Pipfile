@@ -10,6 +10,14 @@ torchaudio = "*"
 transformers = "*"
 datasets = "*"
 einops = "*"
+scikit-learn = "*"
+pandas = "*"
+numpy = "*"
+matplotlib = "*"
+seaborn = "*"
+jupyter = "*"
+networkx = "*"
+langchain = "*"
 
 [dev-packages]
 
