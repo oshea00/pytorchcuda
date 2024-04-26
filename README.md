@@ -17,3 +17,9 @@ WSL2 Ubuntu has a special CUDA Toolkit install available [here](https://develope
 * Microsoft phi 1.5 SML (Small Language Model) capable of non-trivial code/language one-shot results that can be run on a laptop/phone. Example run on RTX3050Ti Laptop GPU takes 8 seconds.
 
 * Microsoft phi 2 SML (Small Language Model) capable of non-trivial code/language one-shot results that can be run on a laptop/phone. Example run on RTX3050Ti Laptop GPU takes 88 seconds.
+
+* Langgraph
+    - ```graphchat.py``` basic chat example
+    - ```graphconditional.py``` conditional tool execution 
+    - ```visgraph.py``` visualization of graph functions
+

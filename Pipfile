@@ -18,6 +18,11 @@ seaborn = "*"
 jupyter = "*"
 networkx = "*"
 langchain = "*"
+langgraph = "*"
+langchain-openai = "*"
+grandalf = "*"
+pyppeteer = "*"
+nest-asyncio = "*"
 
 [dev-packages]
 
