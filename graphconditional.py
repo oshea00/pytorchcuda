@@ -68,6 +68,6 @@ runnable = graph.compile()
 result = runnable.invoke(HumanMessage("What is 123 * 456?"))
 print(result)
 
-#draw_ascii_graph(runnable.get_graph())
-draw_graph(runnable.get_graph(), "graph2.png")
+draw_ascii_graph(runnable.get_graph())
+#draw_graph(runnable.get_graph(), "graph2.png")
 

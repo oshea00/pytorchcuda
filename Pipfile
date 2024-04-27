@@ -23,6 +23,11 @@ langchain-openai = "*"
 grandalf = "*"
 pyppeteer = "*"
 nest-asyncio = "*"
+chromadb = "*"
+langchain-community = "*"
+langchainhub = "*"
+tiktoken = "*"
+beautifulsoup4 = "*"
 
 [dev-packages]
 
