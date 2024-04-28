@@ -28,6 +28,8 @@ langchain-community = "*"
 langchainhub = "*"
 tiktoken = "*"
 beautifulsoup4 = "*"
+youtube-transcript-api = "*"
+pytube = "*"
 
 [dev-packages]
 
