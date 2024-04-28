@@ -63,12 +63,12 @@ def get_unique_union(documents: list[list]):
     return [loads(doc) for doc in unique_docs]
 
 # Retrieve
-question = "What is task decomposition for LLM agents?"
+# question = "What is task decomposition for LLM agents?"
 retrieval_chain = generate_queries | retriever.map() | get_unique_union
-docs = retrieval_chain.invoke({"question":question})
-len(docs)
+# docs = retrieval_chain.invoke({"question":question})
+# len(docs)
 
-print(prompt_perspectives.invoke({"question":"What is task decomposition for LLM agents?"}))
+#print(prompt_perspectives.invoke({"question":"What is task decomposition for LLM agents?"}))
 
 
 # MULTI QUERY
@@ -104,29 +104,32 @@ final_rag_chain = (
 # Now the above is encapslated into pre-packaged langchain retriever:
 # https://python.langchain.com/docs/modules/data_connection/retrievers/MultiQueryRetriever/
 
-from langchain.retrievers.multi_query import MultiQueryRetriever
+# from langchain_community.llms import Ollama
+# from langchain.retrievers.multi_query import MultiQueryRetriever
 
-question = "What is task decomposition for LLM agents?"
-retriever_from_llm = MultiQueryRetriever.from_llm(retriever=vectorstore.as_retriever(),llm=llm)
+# ollama_llm = Ollama(model="llama3", temperature=0)
+
+# question = "What is task decomposition for LLM agents?"
+# retriever_from_llm = MultiQueryRetriever.from_llm(retriever=vectorstore.as_retriever(),llm=ollama_llm)
 
 # import logging
 # logging.basicConfig()
 # logger = logging.getLogger("langchain.retrievers.multi_query").setLevel(logging.INFO)
 
-unique_docs = retriever_from_llm.invoke(question)
-len(unique_docs) # 3
+# unique_docs = retriever_from_llm.invoke(question)
+# len(unique_docs) # 3
 
-new_rag_chain = (
-    {"context": retriever_from_llm, 
-     "question": itemgetter("question")} 
-    | prompt
-    | llm
-    | StrOutputParser()
-)
+# new_rag_chain = (
+#     {"context": retriever_from_llm, 
+#      "question": itemgetter("question")} 
+#     | prompt
+#     | ollama_llm
+#     | StrOutputParser()
+# )
 
-print("=========")
-print(new_rag_chain.invoke({"question":question}))
-print("=========")
+# print("=========")
+# print(new_rag_chain.invoke({"question":question}))
+# print("=========")
 
 
 

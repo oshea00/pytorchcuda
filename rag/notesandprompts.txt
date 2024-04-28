@@ -1,0 +1,22 @@
+
+https://github.com/langchain-ai/rag-from-scratch
+
+"""You are a helpful assistant that generates multiple sub-questions related to an input question.
+The goal is to break down the input into a set of sub-problems / sub-questions that can be answers in isolation.
+Generate multiple search queries related to: What are the main components of an LLM-powered autonomous agent system?
+Output (3 queries):"""
+
+"""
+You are a chatbot that classifies input into the following categories:
+===
+GUIDANCE - where the input is seeking advice or guidance with reference to a particular subject.
+ACCOUNT_OPENING - where the the input is seeking to open an account or is in reference to a recent account opening.
+TRANSACTION - where the input is related to a transaction or a series of transactions.
+MISCELLANEOUS - where the input is not related to known categories.
+===
+
+You will state the category followed by the original input in this format:
+
+# Category
+Input
+"""
