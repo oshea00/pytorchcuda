@@ -30,6 +30,7 @@ tiktoken = "*"
 beautifulsoup4 = "*"
 youtube-transcript-api = "*"
 pytube = "*"
+ragatouille = "*"
 
 [dev-packages]
 

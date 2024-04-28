@@ -23,7 +23,7 @@ blog_docs = loader.load()
 # Split
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 text_splitter = RecursiveCharacterTextSplitter.from_tiktoken_encoder(
-    chunk_size=300, 
+    chunk_size=255, 
     chunk_overlap=50)
 
 # Make splits
@@ -66,13 +66,14 @@ template = """Answer the following question based on this context:
 {context}
 
 Question: {question}
+Do not mention the context in your answer.
 """
 
 prompt = ChatPromptTemplate.from_template(template)
 
 final_rag_chain = (
     prompt
-    | llm
+    | Ollama(model=LLM_MODEL, temperature=0)
     | StrOutputParser()
 )
 
