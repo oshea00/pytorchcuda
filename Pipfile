@@ -31,6 +31,7 @@ beautifulsoup4 = "*"
 youtube-transcript-api = "*"
 pytube = "*"
 ragatouille = "*"
+python-dotenv = "*"
 
 [dev-packages]
 
