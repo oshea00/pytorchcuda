@@ -32,8 +32,10 @@ youtube-transcript-api = "*"
 pytube = "*"
 ragatouille = "*"
 python-dotenv = "*"
+tensorboard = "*"
 
 [dev-packages]
+torch-tb-profiler = "*"
 
 [requires]
 python_version = "3.11"
