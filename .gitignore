@@ -3,4 +3,6 @@ notebooks/
 model.pth
 *.pem
 .ragatouille
-
+**/weights/
+**/tokenizer_*.json
+**/events.out.*

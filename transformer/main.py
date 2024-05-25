@@ -38,7 +38,8 @@ class InputEmbeddings(nn.Module):
         self.embedding = nn.Embedding(vocab_size, d_model) # PyTorch layer that converts integer indices to dense embeddings
         
     def forward(self, x):
-        return self.embedding(x) * math.sqrt(self.d_model) # Normalizing the variance of the embeddings
+        embeddings = self.embedding(x) * math.sqrt(self.d_model) # Normalizing the variance of the embeddings
+        return embeddings
 
 # Creating the Positional Encoding
 class PositionalEncoding(nn.Module):
@@ -53,6 +54,7 @@ class PositionalEncoding(nn.Module):
         pe = torch.zeros(seq_len, d_model) 
         
         # Creating a tensor representing positions (0 to seq_len - 1)
+        # The torch.arange function is used to create a one-dimensional tensor containing a sequence of numbers within a specified range.
         position = torch.arange(0, seq_len, dtype = torch.float).unsqueeze(1) # Transforming 'position' into a 2D tensor['seq_len, 1']
         
         # Creating the division term for the positional encoding formula
@@ -70,9 +72,14 @@ class PositionalEncoding(nn.Module):
         self.register_buffer('pe', pe) 
         
     def forward(self,x):
-        # Addind positional encoding to the input tensor X
+        # Adding positional encoding to the input tensor X.
+        # Stopping Gradient Tracking: Setting requires_grad to False
+        # means that no operations on this tensor will be tracked, and hence no gradients will be computed.
+        # This is useful for tensors that do not require gradients, such as input data or
+        # certain intermediate computations that should not influence the gradient calculation.
         x = x + (self.pe[:, :x.shape[1], :]).requires_grad_(False)
-        return self.dropout(x) # Dropout for regularization
+        ff = self.dropout(x) # Applying dropout to the positional encoding
+        return ff
 
 # Creating Layer Normalization
 class LayerNormalization(nn.Module):
@@ -92,7 +99,8 @@ class LayerNormalization(nn.Module):
         std = x.std(dim = -1, keepdim = True) # Computing the standard deviation of the input data. Keeping the number of dimensions unchanged
         
         # Returning the normalized input
-        return self.alpha * (x-mean) / (std + self.eps) + self.bias
+        normalized = self.alpha * (x-mean) / (std + self.eps) + self.bias
+        return normalized
 
 # Creating Feed Forward Layers
 class FeedForwardBlock(nn.Module):
@@ -107,7 +115,8 @@ class FeedForwardBlock(nn.Module):
         
     def forward(self, x):
         # (Batch, seq_len, d_model) --> (batch, seq_len, d_ff) -->(batch, seq_len, d_model)
-        return self.linear_2(self.dropout(torch.relu(self.linear_1(x))))
+        fflayer = self.linear_2(self.dropout(torch.relu(self.linear_1(x))))
+        return fflayer
 
 # Creating the Multi-Head Attention block
 class MultiHeadAttentionBlock(nn.Module):
@@ -123,6 +132,9 @@ class MultiHeadAttentionBlock(nn.Module):
         # d_k is the dimension of each attention head's key, query, and value vectors
         self.d_k = d_model // h # d_k formula, like in the original "Attention Is All You Need" paper
         
+        # torch.nn.Linear(in_features, out_features, bias=True) # learns bias
+        # Applies a linear transformation to the incoming data: y = inputx * Wgt^T + bias
+
         # Defining the weight matrices
         self.w_q = nn.Linear(d_model, d_model) # W_q
         self.w_k = nn.Linear(d_model, d_model) # W_k
@@ -179,7 +191,8 @@ class ResidualConnection(nn.Module):
     
     def forward(self, x, sublayer):
         # We normalize the input and add it to the original input 'x'. This creates the residual connection process.
-        return x + self.dropout(sublayer(self.norm(x))) 
+        ff = x + self.dropout(sublayer(self.norm(x))) 
+        return ff
 
 # Building Encoder Block
 class EncoderBlock(nn.Module):
@@ -306,7 +319,8 @@ class Transformer(nn.Module):
 # Building & Initializing Transformer
 
 # Defining function and its parameter, including model dimension, number of encoder and decoder stacks, heads, etc.
-def build_transformer(src_vocab_size: int, tgt_vocab_size: int, src_seq_len: int, tgt_seq_len: int, d_model: int = 512, N: int = 6, h: int = 8, dropout: float = 0.1, d_ff: int = 2048) -> Transformer:
+def build_transformer(src_vocab_size: int, tgt_vocab_size: int, src_seq_len: int, tgt_seq_len: int, d_model: int = 512, 
+                      N: int = 6, h: int = 8, dropout: float = 0.1, d_ff: int = 2048) -> Transformer:
     
     # Creating Embedding layers
     src_embed = InputEmbeddings(d_model, src_vocab_size) # Source language (Source Vocabulary to 512-dimensional vectors)
@@ -348,6 +362,11 @@ def build_transformer(src_vocab_size: int, tgt_vocab_size: int, src_seq_len: int
     transformer = Transformer(encoder, decoder, src_embed, tgt_embed, src_pos, tgt_pos, projection_layer)
     
     # Initialize the parameters
+    # explain xavier_uniform_ initialization
+    # Xavier initialization is a method for initializing weights in a neural network.
+    # It draws the weights from a Gaussian distribution with a mean of 0 and a variance
+    # of 2/(number of input units + number of output units).
+    # This initialization helps to keep the weights in a reasonable range, preventing them from becoming too large or too small.
     for p in transformer.parameters():
         if p.dim() > 1:
             nn.init.xavier_uniform_(p)
@@ -379,6 +398,9 @@ def build_tokenizer(config, ds, lang):
     return tokenizer # Returns the loaded tokenizer or the trained tokenizer
 
 # Iterating through dataset to extract the original sentence and its translation 
+# https://huggingface.co/datasets/Helsinki-NLP/opus_books/viewer/en-it?row=6
+# example pair: {'translation': {'en': 'The book is on the table.', 'it': 'Il libro è sul tavolo.'}}
+
 def get_all_sentences(ds, lang):
     for pair in ds:
         yield pair['translation'][lang]
@@ -417,7 +439,8 @@ def get_ds(config):
     
     # Creating dataloaders for the training and validadion sets
     # Dataloaders are used to iterate over the dataset in batches during training and validation
-    train_dataloader = DataLoader(train_ds, batch_size = config['batch_size'], shuffle = True) # Batch size will be defined in the config dictionary
+    # Batch size will be defined in the config dictionary
+    train_dataloader = DataLoader(train_ds, batch_size = config['batch_size'], shuffle = True) 
     val_dataloader = DataLoader(val_ds, batch_size = 1, shuffle = True)
     
     return train_dataloader, val_dataloader, tokenizer_src, tokenizer_tgt # Returning the DataLoader objects and tokenizers
@@ -428,8 +451,13 @@ def casual_mask(size):
         mask = torch.triu(torch.ones(1, size, size), diagonal = 1).type(torch.int)
         return mask == 0
 
+
+# In PyTorch, the Dataset class is an abstract class that represents a dataset. It's a crucial component
+# in the data handling pipeline for training machine learning models. The Dataset class provides 
+# an interface for accessing and manipulating data, allowing you to define how data should be loaded, processed, and accessed.
 class BilingualDataset(Dataset):
     
+
     # This takes in the dataset contaning sentence pairs, the tokenizers for target and source languages, and the strings of source and target languages
     # 'seq_len' defines the sequence length for both languages
     def __init__(self, ds, tokenizer_src, tokenizer_tgt, src_lang, tgt_lang, seq_len) -> None:
@@ -550,8 +578,9 @@ def greedy_decode(model, source, source_mask, tokenizer_src, tokenizer_tgt, max_
         # If the next token is an End of Sentence token, we finish the loop
         if next_word == eos_idx:
             break
-            
-    return decoder_input.squeeze(0) # Sequence of tokens generated by the decoder
+    # Sequence of tokens generated by the decoder
+    toks = decoder_input.squeeze(0)
+    return toks
 
 # Defining function to evaluate the model on the validation dataset
 # num_examples = 2, two examples per run
@@ -674,6 +703,9 @@ def train_model(config):
         
         # Initializing an iterator over the training dataloader
         # We also use tqdm to display a progress bar
+        # Decorate an iterable object, returning an iterator which acts exactly
+        # like the original iterable, but prints a dynamically updating
+        # progressbar every time a value is requested.
         batch_iterator = tqdm(train_dataloader, desc = f'Processing epoch {epoch:02d}')
         
         # For each batch...
