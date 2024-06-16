@@ -12,15 +12,13 @@ test_data = datasets.FashionMNIST(
 )
 
 # Get cpu, gpu or mps device for training.
-# device = (
-#     "cuda"
-#     if torch.cuda.is_available()
-#     else "mps"
-#     if torch.backends.mps.is_available()
-#     else "cpu"
-# )
-
-device=("cuda")
+device = (
+     "cuda"
+     if torch.cuda.is_available()
+     else "mps:0"
+     if torch.backends.mps.is_available()
+     else "cpu"
+)
 
 print(f"Using {device} device")
 # Define model
