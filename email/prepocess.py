@@ -13,13 +13,14 @@ def clean_email_content(file_path):
     
     # Define the prompt
     prompt = f"""
-    I have an email text, and I need to extract and display only the main content while removing any boilerplate text such as signatures, disclaimers, or any text after the main body. Here's the email text delimited by ```:
-
+    I have an email text, and I need to extract and display only the main content while 
+    removing any boilerplate text such as signatures, disclaimers, or any text after the main body. 
+    Here's the email text delimited by ```:
     ```
     {email_text}
     ```
-
-    Please format the email to show only the main content. Remove any signatures, disclaimers, or other boilerplate text that typically appears at the end of an email. The cleaned-up email should be concise and only include the important information.
+    Format the email to show only the main content. Remove any signatures, disclaimers, 
+    or other boilerplate text that typically appears at the end of an email.
     Do not include any text that is not part of the main body of the email.
     Do not repeat these instructions in the response.
     Do not include delimiters such as triple quotes in the response.
