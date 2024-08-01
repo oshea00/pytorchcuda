@@ -6,3 +6,4 @@ model.pth
 **/weights/
 **/tokenizer_*.json
 **/events.out.*
+email/email*.txt
