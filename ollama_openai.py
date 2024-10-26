@@ -1,16 +1,17 @@
 from openai import OpenAI
 
 client = OpenAI(
-    base_url='https://ollama.limpidfox.net/v1',
+    base_url='http://localhost:11434/v1',
     # required but ignored
     api_key='ollama'
 )
 
 def answer_question(question):
   completion = client.chat.completions.create(
-    model="llama3:latest",
+    model="llama3.1:latest",
     messages=[{"role":"user","content":question}],
-    temperature=0.5,
+    extra_headers={"X_CUST":"Mike"},
+    temperature=0,
     top_p=1,
     max_tokens=1500,
     stream=True

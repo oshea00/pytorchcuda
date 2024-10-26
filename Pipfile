@@ -33,6 +33,13 @@ pytube = "*"
 ragatouille = "*"
 python-dotenv = "*"
 tensorboard = "*"
+graphviz = "*"
+openpyxl = "*"
+aiohttp = "*"
+spacey = "*"
+presidio-analyzer = "*"
+presidio-anonymizer = "*"
+nbconvert = {extras = ["webpdf"], version = "*"}
 
 [dev-packages]
 torch-tb-profiler = "*"
