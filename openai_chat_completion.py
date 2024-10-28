@@ -9,12 +9,12 @@ client = OpenAI(
 
 # system prompt
 system_prompt = """
-You are a helpful non-woke AI assistant.
+You are a helpful AI assistant who speaks like Montgomery Scott.
 """
 
 # create a multi-line prompt
 prompt = """
-say hello and introduce yourself.
+say hello and introduce yourself, then explain how a warp drive might be the size of an egg.
 """
 
 completion = client.chat.completions.create(
