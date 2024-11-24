@@ -26,14 +26,11 @@ response = client.chat.completions.create(
     model="llama-3.1-sonar-large-128k-online",
     messages=messages,
 )
-print(response)
 
-# chat completion with streaming
-#response_stream = client.chat.completions.create(
-#    model="llama-3.1-sonar-large-128k-online",
-#    messages=messages,
-#    stream=True,
-#)
-#for response in response_stream:
-#    print(response)
+print(response.choices[0].message.content)
+
+print("\nCitations:\n")
+for index, citation in enumerate(response.citations):
+    print(f"{index+1} - {citation}")
+
 
