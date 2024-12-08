@@ -5,8 +5,8 @@ import os
 # API_KEY = os.getenv("XAI_API_KEY")
 # MODEL = "grok-beta"
 
-BASE_URL = "http://192.168.1.32:1234/"
-API_KEY = os.getenv("XAI_API_KEY")
+BASE_URL = "http://localhost:1234/v1/"
+API_KEY = "na"
 MODEL = "llama-3.2-1b-instruct"
 
 client = OpenAI(
