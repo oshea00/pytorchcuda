@@ -1,10 +1,17 @@
 from openai import OpenAI
 import os
 
-apikey = os.getenv("XAI_API_KEY")
+# BASE_URL = "https://api.x.ai/v1/"
+# API_KEY = os.getenv("XAI_API_KEY")
+# MODEL = "grok-beta"
+
+BASE_URL = "http://localhost:1234/v1/"
+API_KEY = "na"
+MODEL = "llama-3.2-1b-instruct"
+
 client = OpenAI(
-    base_url="https://api.x.ai/v1/",
-    api_key=apikey
+    base_url=BASE_URL,
+    api_key=API_KEY
 )
 
 # system prompt
@@ -18,7 +25,7 @@ say hello and introduce yourself, then explain how a warp drive might be the siz
 """
 
 completion = client.chat.completions.create(
-  model="grok-beta",
+  model=MODEL,
   messages=[
       {"role": "system", "content": system_prompt},
       {"role": "user", "content": prompt}
