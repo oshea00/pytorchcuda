@@ -1,3 +1,7 @@
+import os
+from openai import OpenAI
+api_key = os.getenv("OPENAI_API_KEY")
+client = OpenAI(api_key=api_key)
 from pydantic import BaseModel, Field, create_model
 from typing import Any, Dict
 import json
@@ -5,6 +9,10 @@ import json
 class Message(BaseModel):
     role: str
     content: str
+
+class CalendarEvent(BaseModel):
+    event_name: str
+    start_date: str
 
 payload_response_format = {
   "type": "json_schema",
@@ -51,7 +59,7 @@ def json_schema_to_pydantic_model(schema: Dict[str, Any]) -> BaseModel:
             "array": list,
             "object": dict
         }
-        
+
         python_type = type_mapping.get(field_type, Any)
 
         # Required fields handling
