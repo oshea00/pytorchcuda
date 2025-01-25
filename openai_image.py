@@ -7,18 +7,9 @@ load_dotenv()
 
 api_key = os.getenv("OPENAI_API_KEY")
 
-# print(api_key)
-
 client = OpenAI()
 
-# read image file and convert to base64
-# Path to your image
 image_path = "graph1.png"
-
-# with open("graph1.png", "rb") as image_file:
-#     image_base64 = base64.b64encode(
-#         image_file.read()
-#     ).decode("utf-8")
 
 
 # Function to encode the image
@@ -29,11 +20,10 @@ def encode_image(image_path):
         ).decode("utf-8")
 
 
-# Getting the Base64 string
 base64_image = encode_image(image_path)
 
 response = client.chat.completions.create(
-    model="gpt-4o-mini",
+    model="gpt-4o",
     messages=[
         {
             "role": "user",
