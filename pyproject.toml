@@ -1,0 +1,10 @@
+[project]
+name = "pytorchcuda"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "openai>=1.60.0",
+    "python-dotenv>=1.0.1",
+]
