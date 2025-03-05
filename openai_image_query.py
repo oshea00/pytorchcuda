@@ -3,17 +3,17 @@ import base64
 
 
 apikey = "<enter>"
-client = OpenAI(
-    base_url="https://api.x.ai/v1/",
-    api_key=apikey
-)
+client = OpenAI(base_url="https://openai.api.x.ai/v1/", api_key=apikey)
+# client = OpenAI(api_key=apikey)
+
 
 def encode_image_to_base64(image_path):
     """
     Encode an image file to base64 string
     """
     with open(image_path, "rb") as image_file:
-        return base64.b64encode(image_file.read()).decode('utf-8')
+        return base64.b64encode(image_file.read()).decode("utf-8")
+
 
 def ask_gpt4o_about_image(image_path, prompt="What are the words in this image?"):
     """
@@ -34,19 +34,19 @@ def ask_gpt4o_about_image(image_path, prompt="What are the words in this image?"
                         "type": "image_url",
                         "image_url": {
                             "url": f"data:image/jpeg;base64,{base64_image}",
-                            "detail": "high"  # Request high detail analysis
-                        }
-                    }
-                ]
+                            "detail": "high",  # Request high detail analysis
+                        },
+                    },
+                ],
             }
-        ]
+        ],
     )
 
     # Return the model's response
     return response.choices[0].message.content
 
+
 # Example usage
-image_path = "graph2.png"  # Replace with your image path
+image_path = "awscourses.jpg"  # Replace with your image path
 result = ask_gpt4o_about_image(image_path)
 print(result)
-
