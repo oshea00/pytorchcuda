@@ -12,7 +12,9 @@ class PythonPackageAnalyzer:
     and generates a Dockerfile that installs these packages along with pytest.
     """
 
-    def __init__(self, src_dir=None, python_code=None, filename=None):
+    def __init__(
+        self, src_dir=None, python_code=None, filename=None, python_version=None
+    ):
         """
         Initialize the analyzer with a source directory, Python code as a string, or a Python file.
 
@@ -42,7 +44,7 @@ class PythonPackageAnalyzer:
             )
 
         self.required_packages = set()
-        self.python_version = None
+        self.python_version = python_version
         self.package_aliases = {
             "dotenv": "python-dotenv",
             "sklearn": "scikit-learn",
@@ -316,12 +318,14 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
-    # Create analyzer with source directory
-    analyzer = PythonPackageAnalyzer(src_dir=args.src_dir)
-
     # Override Python version if provided
     if args.python:
-        analyzer.python_version = args.python
+        python_version = args.python
+
+    # Create analyzer with source directory
+    analyzer = PythonPackageAnalyzer(
+        src_dir=args.src_dir, python_version=python_version
+    )
 
     # Analyze code and get required packages
     required_packages = analyzer.analyze()
