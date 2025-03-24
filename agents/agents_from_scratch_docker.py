@@ -5,6 +5,7 @@ import re
 from typing import List, Dict, Any, Optional
 from openai import OpenAI
 import argparse  # Add argparse import
+from docker_test import PythonPackageAnalyzer
 
 # Initialize OpenAI client
 client = OpenAI(
@@ -290,52 +291,12 @@ Return ONLY the test code, with no explanations or other text."""
         
         return test_code
     
-    def _generate_required_packages(self, code_to_test: str, architecture_plan: str) -> str:
-        """Generate package list for the implementation using GPT."""
-        # Prepare prompt for generating test code
-        test_generation_prompt = f"""You are an expert Python engineer. 
-examine code to determine which packages are needed from pypy that are not part of the default python installation.
-
-CODE TO EXAMINE:
-```python
-{code_to_test}
-```
-
-OUTPUT FORMAT:
-
-Create a space-delimited list of the packages required on a single line."""
-
-        # Call the API to generate test code
-        response = client.chat.completions.create(
-            model="gpt-4o",
-            messages=[{"role": "system", "content": "You are an expert in python packages."},
-                      {"role": "user", "content": test_generation_prompt}],
-            temperature=0.7,
-        )
-        
-        test_code_raw = response.choices[0].message.content
-        
-        # Extract just the code if it's in a code block
-        test_code_match = re.search(r'```python\s*([\s\S]*?)\s*```', test_code_raw)
-        if test_code_match:
-            test_code = test_code_match.group(1)
-        else:
-            test_code = test_code_raw
-        
-        return test_code
-    
     def _run_in_docker_sandbox(self, code_to_test: str, test_code: str) -> dict:
         """Run the code and tests in a Docker sandbox environment."""
         import subprocess
         import tempfile
         import os
         
-        # send code_to_test to chat completions to create packages
-        # for loading into the docker sandbox
-        required_packages = self._generate_required_packages(code_to_test, "") 
-        # make sure required_packages does not end in newline
-        required_packages = required_packages.strip()
-
         # Create a temporary directory for the files
         with tempfile.TemporaryDirectory() as temp_dir:
             # Create implementation file
@@ -364,9 +325,9 @@ def pytest_runtest_makereport(item, call):
 """)
             # copy the contents of the temp directory to the current directory for debugging purposes
             import shutil
-            if os.path.exists("impl_dir"):
-                shutil.rmtree("impl_dir")
-            shutil.copytree(temp_dir, "impl_dir")
+            if os.path.exists("src"):
+                shutil.rmtree("src")
+            shutil.copytree(temp_dir, "src")
 
             # Check if Docker is available
             try:
@@ -379,18 +340,38 @@ def pytest_runtest_makereport(item, call):
                     "return_code": -1
                 }
             
+
             try:
-                # Run the tests in a Docker container with strict 
-                result = subprocess.run(
-                    [
-                        "docker", "run", "--rm",
-                        # "--network=none",  # No network access
-                        # "--memory=200m",   # Memory limit
-                        "--cpus=0.5",      # CPU limit
-                        "-v", f"{temp_dir}:/code",  # Mount code directory
-                        "python:3.11-slim",  # Use slim Python image
-                        "bash", "-c", f"cd /code && pip install pytest {required_packages} && python -m pytest test_implementation.py -v"
-                    ],
+                analyzer = PythonPackageAnalyzer(src_dir="src")
+                # Analyze code and get required packages
+                required_packages = analyzer.analyze()
+                print(f"Found {len(required_packages)} required packages:")
+                for package in sorted(required_packages):
+                    print(f"  - {package}")
+
+                # Generate Dockerfile
+                dockerfile = analyzer.generate_dockerfile(output_file="Dockerfile")
+                print(f"\nGenerated Dockerfile and requirements.txt")
+                print(f"Python version detected: {analyzer.python_version}")
+
+                # Print excluded local modules
+                if hasattr(analyzer, "src_dir") and analyzer.files:
+                    local_modules = {file_path.stem for file_path in analyzer.files}
+                    local_packages = set()
+                    for file_path in analyzer.files:
+                        parent_dir = file_path.parent
+                        if (parent_dir / "__init__.py").exists():
+                            local_packages.add(parent_dir.name)
+
+                    print("\nExcluded local modules/packages:")
+                    for module in sorted(local_modules.union(local_packages)):
+                        print(f"  - {module}")
+
+                # Build container using the generated Dockerfile
+                subprocess.run(["docker", "build", "-t", "test", "."])
+
+                # Use Docker to run the tests in the "test" container
+                result = subprocess.run(["docker", "run", "test"],
                     capture_output=True,
                     text=True,
                     timeout=30, # 30 second timeout

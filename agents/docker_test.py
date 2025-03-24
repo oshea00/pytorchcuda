@@ -191,6 +191,7 @@ class PythonPackageAnalyzer:
             "traceback",
             "types",
             "typing",
+            "unittest",
             "uuid",
             "warnings",
             "xml",
