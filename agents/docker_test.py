@@ -42,7 +42,12 @@ class PythonPackageAnalyzer:
             )
 
         self.required_packages = set()
-        self.python_version = "3.9"  # Default Python version
+        self.python_version = None
+        self.package_aliases = {
+            "dotenv": "python-dotenv",
+            "sklearn": "scikit-learn",
+            # Add more aliases as needed
+        }
 
     def analyze(self):
         """
@@ -83,6 +88,11 @@ class PythonPackageAnalyzer:
 
         # Remove local modules from required packages
         self.required_packages = self.required_packages - local_module_names
+
+        # Apply package aliases
+        self.required_packages = {
+            self.package_aliases.get(pkg, pkg) for pkg in self.required_packages
+        }
 
         return self.required_packages
 
@@ -192,16 +202,17 @@ class PythonPackageAnalyzer:
         Look for potential Python version requirements in the code.
         If analyzing multiple files, uses the highest version found.
         """
-        if hasattr(self, "src_dir") and self.files:
-            for file_path in self.files:
-                try:
-                    with open(file_path, "r", encoding="utf-8") as f:
-                        code = f.read()
-                    self._check_python_version_features(code)
-                except Exception as e:
-                    print(f"Error checking Python version in {file_path}: {e}")
-        else:
-            self._check_python_version_features(self.code)
+        if self.python_version is None:
+            if hasattr(self, "src_dir") and self.files:
+                for file_path in self.files:
+                    try:
+                        with open(file_path, "r", encoding="utf-8") as f:
+                            code = f.read()
+                        self._check_python_version_features(code)
+                    except Exception as e:
+                        print(f"Error checking Python version in {file_path}: {e}")
+            else:
+                self._check_python_version_features(self.code)
 
     def _check_python_version_features(self, code):
         """
