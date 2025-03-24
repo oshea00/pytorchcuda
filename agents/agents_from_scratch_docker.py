@@ -4,6 +4,7 @@ import time
 import re
 from typing import List, Dict, Any, Optional
 from openai import OpenAI
+import argparse  # Add argparse import
 
 # Initialize OpenAI client
 client = OpenAI(
@@ -609,27 +610,36 @@ if __name__ == "__main__":
     print("🤖 Agentic Flow - Software Development System")
     print("--------------------------------------------")
     
-    # Ask for maximum iterations
-    max_iterations_input = input("🔄 Enter maximum number of test-fix iterations (default: 3): ").strip()
-    max_iterations = 3  # default
-    if max_iterations_input and max_iterations_input.isdigit():
-        max_iterations = int(max_iterations_input)
+    # Argument parser setup
+    parser = argparse.ArgumentParser(description="Run the Agentic Flow system.")
+    parser.add_argument('--description-file', type=str, help='Path to a file containing the problem description.')
+    parser.add_argument('--max-iterations', type=int, default=3, help='Maximum number of test-fix iterations (default: 3).')
+    args = parser.parse_args()
     
-    problem_description = input("📝 Enter your problem description (or press Enter for a default example): ").strip()
-    
-    if not problem_description:
-        problem_description = """
-        We need a system to manage inventory for a small retail store. 
-        The store sells various products and needs to track stock levels, 
-        sales, and purchases. The system should alert when items are running low 
-        and generate reports on sales and inventory status. It should be easy 
-        to use for staff who aren't very technical.
-        """
-        print("\n✨ Using default example problem:\n")
-        print(problem_description)
+    # Load problem description
+    if args.description_file:
+        try:
+            with open(args.description_file, 'r') as file:
+                problem_description = file.read().strip()
+            print(f"📄 Loaded problem description from {args.description_file}")
+        except Exception as e:
+            print(f"❌ Error reading description file: {e}")
+            exit(1)
+    else:
+        problem_description = input("📝 Enter your problem description (or press Enter for a default example): ").strip()
+        if not problem_description:
+            problem_description = """
+            We need a system to manage inventory for a small retail store. 
+            The store sells various products and needs to track stock levels, 
+            sales, and purchases. The system should alert when items are running low 
+            and generate reports on sales and inventory status. It should be easy 
+            to use for staff who aren't very technical.
+            """
+            print("\n✨ Using default example problem:\n")
+            print(problem_description)
     
     start_time = time.time()
-    flow = AgenticFlow(max_iterations=max_iterations)
+    flow = AgenticFlow(max_iterations=args.max_iterations)
     results = flow.run(problem_description)
     end_time = time.time()
     
