@@ -13,7 +13,7 @@ class PythonPackageAnalyzer:
     """
 
     def __init__(
-        self, src_dir=None, python_code=None, filename=None, python_version=None
+        self, src_dir=None, python_code=None, filename=None, python_version=""
     ):
         """
         Initialize the analyzer with a source directory, Python code as a string, or a Python file.
@@ -204,7 +204,7 @@ class PythonPackageAnalyzer:
         Look for potential Python version requirements in the code.
         If analyzing multiple files, uses the highest version found.
         """
-        if self.python_version is None:
+        if self.python_version == "":
             if hasattr(self, "src_dir") and self.files:
                 for file_path in self.files:
                     try:
@@ -318,13 +318,9 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
-    # Override Python version if provided
-    if args.python:
-        python_version = args.python
-
     # Create analyzer with source directory
     analyzer = PythonPackageAnalyzer(
-        src_dir=args.src_dir, python_version=python_version
+        src_dir=args.src_dir, python_version=args.python if args.python else ""
     )
 
     # Analyze code and get required packages
